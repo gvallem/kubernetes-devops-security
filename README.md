@@ -1,7 +1,5 @@
 # kubernetes-devops-security
 
-## Fork and Clone this Repo
-
 ## Clone to Desktop and VM
 
 ## NodeJS Microservice - Docker Image -

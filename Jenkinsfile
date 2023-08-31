@@ -56,7 +56,7 @@ pipeline {
       }
     }
     
-    stage('Docker Build and Push') {
+    /* stage('Docker Build and Push') {
       steps {
         withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
           sh 'printenv' //New Stage
@@ -64,7 +64,7 @@ pipeline {
           sh 'docker push gvallem01/numeric-app:""$GIT_COMMIT""'
         }
       }
-    }
+    } */
     
     stage('Kubernetes Deployment - DEV') {
       steps {

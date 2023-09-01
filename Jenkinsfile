@@ -59,7 +59,7 @@ pipeline {
       }
     }
     
-    /* stage('Docker Build and Push') {
+    stage('Docker Build and Push') {
       steps {
         withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
           sh 'printenv' //New Stage
@@ -67,16 +67,23 @@ pipeline {
           sh 'docker push gvallem01/numeric-app:""$GIT_COMMIT""'
         }
       }
-    } */
+    }
     
-    /* stage('Kubernetes Deployment - DEV') {
+    stage('Vulnerability Scan - Kubernetes') {
+      steps {
+        sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-k8s-security.rego k8s_deployment_service.yaml'
+      }
+    }
+
+
+    stage('Kubernetes Deployment - DEV') {
       steps {
         withKubeConfig([credentialsId: 'kubeconfig']) {
           sh "sed -i 's#replace#gvallem01/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
           sh "kubectl apply -f k8s_deployment_service.yaml"
         }
       }
-    } */
+    }
     
 
     }

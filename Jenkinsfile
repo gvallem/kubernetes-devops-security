@@ -2,12 +2,12 @@ pipeline {
   agent any
 
    environment {
-    /* deploymentName = "devsecops"
+    deploymentName = "devsecops"
     containerName = "devsecops-container"
-    serviceName = "devsecops-svc" */
+    serviceName = "devsecops-svc"
     imageName = "gvallem01/numeric-app:${GIT_COMMIT}"
-    /* applicationURL = "http://devsecops-demo.eastus.cloudapp.azure.com/"
-    applicationURI = "/increment/99" */
+    applicationURL = "http://devsecops-demo.gvm.eastus.cloudapp.azure.com/"
+    applicationURI = "/increment/99"
   }
 
   stages {
@@ -91,7 +91,7 @@ pipeline {
           }/* ,
           "Kubesec Scan": {
             sh "bash kubesec-scan.sh"
-          } */,
+          } NOT TRY*/,
          /*  "Trivy Scan": {
             sh "bash trivy-k8s-scan.sh"
           } */
@@ -106,6 +106,23 @@ pipeline {
         withKubeConfig([credentialsId: 'kubeconfig']) {
           sh "sed -i 's#replace#gvallem01/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
           sh "kubectl apply -f k8s_deployment_service.yaml"
+        }
+      }
+    }
+
+    stage('Integration Tests - DEV') {
+      steps {
+        script {
+          try {
+            withKubeConfig([credentialsId: 'kubeconfig']) {
+              sh "bash integration-test.sh"
+            }
+          } catch (e) {
+            withKubeConfig([credentialsId: 'kubeconfig']) {
+              sh "kubectl -n default rollout undo deploy ${deploymentName}"
+            }
+            throw e
+          }
         }
       }
     }

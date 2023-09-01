@@ -2,7 +2,7 @@
 
 #integration-test.sh
 
-sleep 5s
+sleep 15s
 #Probar también curl -s -o /dev/null -w "%{http_code}" localhost:30802/increment/99
 PORT=$(kubectl -n default get svc ${serviceName} -o json | jq .spec.ports[].nodePort)
 
